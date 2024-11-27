@@ -1,4 +1,5 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://0001-Add-ODROID-M1-DTS.patch"
-SRC_URI += "file://0001-HACK-remove-rootfs.patch"
+SRC_URL += "file://0001-HACK-remove-hardcoded-rootfs.patch \
+	0002-Add-ODROID-M2-Support.patch \
+	0003-Add-ODROID-M1-support.patch"
