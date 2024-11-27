@@ -2,17 +2,28 @@ inherit image
 inherit deploy
 inherit core-image
 
+DEPENDS += "u-boot-odroid-rk"
+
 IMAGE_FEATURES += "package-management serial-autologin-root ssh-server-dropbear weston"
 
-
 IMAGE_INSTALL += "chromium-ozone-wayland drm-cursor weston"
-IMAGE_INSTALL += "rockchip-librga v4l-rkmpp glmark2 "
-IMAGE_INSTALL += "v4l-utils rockchip-mpp rockchip-alsa-config "
-IMAGE_INSTALL += "alsa-lib alsa-plugins alsa-tools alsa-utils "
-IMAGE_INSTALL += "initscripts packagegroup-core-boot udev-conf-rockchip"
-IMAGE_INSTALL += "openssl net-tools ntp-utils"
-
-IMAGE_INSTALL += "\
+IMAGE_INSTALL += " \
+	rockchip-librga \
+	v4l-rkmpp \
+	glmark2 \
+	v4l-utils \
+	rockchip-mpp \
+	rockchip-alsa-config \
+	alsa-lib \
+	alsa-plugins \
+	alsa-tools \
+	alsa-utils \
+	initscripts \
+	packagegroup-core-boot \
+	udev-conf-rockchip \
+	openssl \
+	net-tools \
+	ntp-utils \
 	${ROOTFS_PKGMANAGE} \
 	avahi-daemon \
 	ca-certificates \
@@ -33,6 +44,10 @@ IMAGE_INSTALL += "\
 	sdparm \
 	tzdata \
 "
+
+BOOT_FILES:append := " boot.scr autostart.cfg"
+IMAGE_BOOT_FILES:append := " boot.scr autostart.cfg"
+
 
 VIRTUAL-RUNTIME_init_manager = "systemd"
 VIRTUAL-RUNTIME_initscripts = "systemd-compat-units"

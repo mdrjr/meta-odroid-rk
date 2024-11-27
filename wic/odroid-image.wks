@@ -1,6 +1,9 @@
 bootloader --ptable gpt
 
 # fat partition, with 100Mb
+part --source rawcopy --sourceparams="file=idblock.bin" --align 32 --no-table
+part --source rawcopy --sourceparams="file=uboot.img" --part-name uboot --offset 2M
+
 part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 1024 --fixed-size 100 --use-uuid
 
 # Rootfs partition
