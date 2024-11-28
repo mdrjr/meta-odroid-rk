@@ -1,7 +1,7 @@
 From 57275a7f9720f7c767c6c2ebe3130e171b12ab3c Mon Sep 17 00:00:00 2001
 From: "Mauro (mdrjr) Ribeiro" <mauro.ribeiro@hardkernel.com>
 Date: Wed, 27 Nov 2024 13:31:23 -0300
-Subject: [PATCH 2/4] Add ODROID-M2 Support
+Subject: [PATCH 2/5] Add ODROID-M2 Support
 
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |    1 +

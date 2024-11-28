@@ -1,7 +1,7 @@
 From 6459beb3f38ad09249cd12d2bbb7a17366a78c25 Mon Sep 17 00:00:00 2001
 From: "Mauro (mdrjr) Ribeiro" <mauro.ribeiro@hardkernel.com>
 Date: Wed, 27 Nov 2024 23:40:05 -0300
-Subject: [PATCH 4/4] Add ODROID-M1S support
+Subject: [PATCH 4/5] Add ODROID-M1S support
 
 ---
  arch/arm64/boot/dts/rockchip/Makefile         |    1 +
