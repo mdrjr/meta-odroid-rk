@@ -21,8 +21,8 @@ UNPACKDIR = "${S}"
 
 do_deploy() { 
     install -d ${DEPLOYDIR}
-    install -m 0644 odroid-m1s/idblock.bin "${DEPLOYDIR}"/idblock.bin
-    install -m 0644 odroid-m1s/uboot.img "${DEPLOYDIR}"/uboot.img
+    install -m 0644 ${MACHINE}/idblock.bin "${DEPLOYDIR}"/idblock.bin
+    install -m 0644 ${MACHINE}/uboot.img "${DEPLOYDIR}"/uboot.img
     install -m 0644 autostart.cfg "${DEPLOYDIR}"/autostart.cfg
     install -m 0644 boot.scr "${DEPLOYDIR}"/boot.scr
 }
