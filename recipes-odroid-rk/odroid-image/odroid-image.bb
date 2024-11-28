@@ -2,12 +2,13 @@ inherit image
 inherit deploy
 inherit core-image
 
-DEPENDS += "u-boot-odroid-rk"
+DEPENDS += "u-boot-odroid-rk odroid-autostart-cfg"
 
 IMAGE_FEATURES += "package-management serial-autologin-root ssh-server-dropbear weston"
 
 IMAGE_INSTALL += "chromium-ozone-wayland drm-cursor weston"
 IMAGE_INSTALL += " \
+	odroid-autostart-script \
 	rockchip-librga \
 	v4l-rkmpp \
 	glmark2 \
@@ -45,8 +46,16 @@ IMAGE_INSTALL += " \
 	tzdata \
 "
 
-BOOT_FILES:append := " boot.scr autostart.cfg"
-IMAGE_BOOT_FILES:append := " boot.scr autostart.cfg"
+python() { 
+    if d.getVar('DEPENDS').find('u-boot-odroid-rk') != -1:
+        d.appendVar('BOOT_FILES', ' boot.scr ')
+        d.appendVar('IMAGE_BOOT_FILES', ' boot.scr ')
+
+    if d.getVar('DEPENDS').find('odroid-autostart') != -1:
+        d.appendVar('BOOT_FILES', ' autostart.cfg ')
+        d.appendVar('IMAGE_BOOT_FILES', ' autostart.cfg ')
+
+}
 
 
 VIRTUAL-RUNTIME_init_manager = "systemd"

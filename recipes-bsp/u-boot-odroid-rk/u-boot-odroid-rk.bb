@@ -7,8 +7,7 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 SRC_URI = "file://${MACHINE}/idblock.bin \
           file://${MACHINE}/uboot.img \
-          file://${MACHINE}/boot.scr.txt \
-          file://autostart.cfg"
+          file://${MACHINE}/boot.scr.txt"
 
 do_compile() {
     mkimage -A arm64 -T script -C none -n "BootScript" -d "${UNPACKDIR}/${MACHINE}/boot.scr.txt" boot.scr
@@ -23,7 +22,6 @@ do_deploy() {
     install -d ${DEPLOYDIR}
     install -m 0644 ${MACHINE}/idblock.bin "${DEPLOYDIR}"/idblock.bin
     install -m 0644 ${MACHINE}/uboot.img "${DEPLOYDIR}"/uboot.img
-    install -m 0644 autostart.cfg "${DEPLOYDIR}"/autostart.cfg
     install -m 0644 boot.scr "${DEPLOYDIR}"/boot.scr
 }
 
@@ -32,3 +30,4 @@ addtask do_deploy after do_compile before do_build
 ALLOW_EMPTY_${PN} = "1"
 ALLOW_EMPTY_${PN}-dev = "1"
 ALLOW_EMPTY_${PN}-staticdev = "1"
+

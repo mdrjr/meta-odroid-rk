@@ -1,0 +1,19 @@
+#!/bin/sh
+
+WESTON_USER=$1
+
+NTP="1"
+NTP_SERVER="time.google.com"
+URL="http://claro.mdrjr.me/video/index.html"
+
+if test -e /boot/autostart.cfg; then
+    . /boot/autostart.cfg
+fi
+
+if [ "$NTP" -eq "1" ]; then
+    /usr/sbin/ntpdate $NTP_SERVER
+fi
+
+sleep 1
+
+su -c "XDG_RUNTIME_DIR=/run/user/`id -u ${WESTON_USER}` /usr/bin/chromium --enable-features=OverlayScrollbar,OverlayScrollbarFlashAfterAnyScrollUpdate,OverlayScrollbarFlashWhenMouseEnter --noerrdialogs --no-first-run --kiosk --start-fullscreen $URL" $WESTON_USER

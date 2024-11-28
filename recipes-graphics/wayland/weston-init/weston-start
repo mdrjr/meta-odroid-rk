@@ -70,18 +70,6 @@ fi
 
 su -c "XDG_RUNTIME_DIR=/run/user/`id -u ${WESTON_USER}` weston $weston_args --log=/tmp/weston.log" $WESTON_USER &
 
-NTP="1"
-NTP_SERVER="time.google.com"
-URL="https://www.youtube.com/watch?v=Uh5eZgjtv0s"
-
-
-if test -e /boot/autostart.cfg; then
-    . /boot/autostart.cfg
+if test -f /usr/bin/chromium-autostart; then
+	/usr/bin/chromium-autostart $WESTON_USER
 fi
-
-if [ "$NTP" -eq "1" ]; then
-    /usr/sbin/ntpdate $NTP_SERVER
-fi
-
-sleep 1
-su -c "XDG_RUNTIME_DIR=/run/user/`id -u ${WESTON_USER}` /usr/bin/chromium --enable-features=OverlayScrollbar,OverlayScrollbarFlashAfterAnyScrollUpdate,OverlayScrollbarFlashWhenMouseEnter --noerrdialogs --no-first-run --kiosk --start-fullscreen $URL" $WESTON_USER
