@@ -2,30 +2,41 @@ inherit image
 inherit deploy
 inherit core-image
 
-DEPENDS += "u-boot-odroid-rk odroid-autostart-cfg"
+DEPENDS:append = " u-boot-odroid-rk odroid-autostart-cfg"
+IMAGE_INSTALL:append = " odroid-autostart-script "
 
-IMAGE_FEATURES += "package-management serial-autologin-root ssh-server-dropbear weston"
+IMAGE_FEATURES:append = " package-management serial-autologin-root ssh-server-dropbear weston"
+DISPLAY_PLATFORM ?= "wayland"
+DISTRO_FEATURES:append = " egl opengl wayland"
 
-IMAGE_INSTALL += "chromium-ozone-wayland drm-cursor weston"
-IMAGE_INSTALL += " \
-	odroid-autostart-script \
+IMAGE_INSTALL:append = " ncurses-terminfo udev-conf-rockchip os-release ifupdown dhcpcd resolvconf dialog"
+
+# Audio
+IMAGE_INSTALL:append = " alsa-utils rockchip-alsa-config pulseaudio-server alsa-plugins-pulseaudio-conf "
+
+# Chromium
+IMAGE_INSTALL:append = " chromium-ozone-wayland drm-cursor weston v4l-rkmpp v4l-utils libv4l"
+
+# WiFi
+IMAGE_INSTALL:append = " iw wpa-supplicant bluez5"
+
+# glmark2
+IMAGE_INSTALL:append = " glmark2"
+PACKAGECONFIG:pn-glmark2 = \
+	"${@bb.utils.contains('DISTRO_FEATURES', 'x11 opengl', 'x11-gles2', '', d)} \
+	${@bb.utils.contains('DISTRO_FEATURES', 'wayland opengl', 'wayland-gles2', '', d)} \
+	drm-gles2"
+
+# Misc
+IMAGE_INSTALL:append = " \
 	rockchip-librga \
-	v4l-rkmpp \
-	glmark2 \
-	v4l-utils \
 	rockchip-mpp \
-	rockchip-alsa-config \
-	alsa-lib \
-	alsa-plugins \
-	alsa-tools \
-	alsa-utils \
 	initscripts \
 	packagegroup-core-boot \
 	udev-conf-rockchip \
 	openssl \
 	net-tools \
 	ntp-utils \
-	${ROOTFS_PKGMANAGE} \
 	avahi-daemon \
 	ca-certificates \
 	dropbear \
@@ -56,8 +67,4 @@ python() {
         d.appendVar('IMAGE_BOOT_FILES', ' autostart.cfg ')
 
 }
-
-
-VIRTUAL-RUNTIME_init_manager = "systemd"
-VIRTUAL-RUNTIME_initscripts = "systemd-compat-units"
 
