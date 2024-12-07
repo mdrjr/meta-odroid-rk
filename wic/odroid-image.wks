@@ -7,5 +7,5 @@ part --source rawcopy --sourceparams="file=uboot.img" --part-name uboot --offset
 part /boot --source bootimg-partition --ondisk mmcblk --fstype=vfat --label boot --active --align 1024 --fixed-size 100 --use-uuid
 
 # Rootfs partition
-part / --source rootfs --ondisk mmcblk --fstype ext4 --label rootfs --align 4096 --use-uuid --fixed-size=2048
+part / --source rootfs --ondisk mmcblk --fstype ext4 --label rootfs --align 4096 --use-uuid --fixed-size=1024
 
