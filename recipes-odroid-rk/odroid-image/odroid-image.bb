@@ -15,7 +15,8 @@ IMAGE_INSTALL:append = " ncurses-terminfo udev-conf-rockchip os-release ifupdown
 IMAGE_INSTALL:append = " alsa-utils rockchip-alsa-config pulseaudio-server alsa-plugins-pulseaudio-conf "
 
 # Chromium
-IMAGE_INSTALL:append = " chromium-ozone-wayland drm-cursor weston v4l-rkmpp v4l-utils libv4l"
+IMAGE_INSTALL:append = " chromium-ozone-wayland "
+IMAGE_INSTALL:append = " drm-cursor weston v4l-rkmpp v4l-utils libv4l "
 
 # WiFi
 IMAGE_INSTALL:append = " iw wpa-supplicant bluez5"
@@ -66,5 +67,7 @@ python() {
         d.appendVar('BOOT_FILES', ' autostart.cfg ')
         d.appendVar('IMAGE_BOOT_FILES', ' autostart.cfg ')
 
+    if d.getVar('MACHINE') == 'odroid-m2':
+        d.appendVar('IMAGE_INSTALL', ' default-audio-card-1 ')
 }
 
