@@ -16,4 +16,4 @@ fi
 
 sleep 1
 
-su -c "XDG_RUNTIME_DIR=/run/user/`id -u ${WESTON_USER}` /usr/bin/chromium --enable-features=OverlayScrollbar,OverlayScrollbarFlashAfterAnyScrollUpdate,OverlayScrollbarFlashWhenMouseEnter --noerrdialogs --no-first-run --kiosk --start-fullscreen $URL" $WESTON_USER
+su -c "XDG_RUNTIME_DIR=/run/user/`id -u ${WESTON_USER}` /usr/bin/chromium --noerrdialogs --no-first-run --kiosk --start-fullscreen $URL" $WESTON_USER
