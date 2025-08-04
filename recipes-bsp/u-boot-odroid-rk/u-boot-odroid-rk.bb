@@ -9,19 +9,19 @@ SRC_URI = "file://${MACHINE}/idblock.bin \
           file://${MACHINE}/uboot.img \
           file://${MACHINE}/boot.scr.txt"
 
+S = "${WORKDIR}/sources"
+UNPACKDIR = "${S}"
+
 do_compile() {
-    mkimage -A arm64 -T script -C none -n "BootScript" -d "${UNPACKDIR}/${MACHINE}/boot.scr.txt" boot.scr
+    mkimage -A arm64 -T script -C none -n "BootScript" -d "${WORKDIR}/${MACHINE}/boot.scr.txt" boot.scr
 }
 
 inherit kernel-arch deploy nopackages
 
-S = "${WORKDIR}/sources"
-UNPACKDIR = "${S}"
-
 do_deploy() { 
     install -d ${DEPLOYDIR}
-    install -m 0644 ${MACHINE}/idblock.bin "${DEPLOYDIR}"/idblock.bin
-    install -m 0644 ${MACHINE}/uboot.img "${DEPLOYDIR}"/uboot.img
+    install -m 0644 ${WORKDIR}/${MACHINE}/idblock.bin "${DEPLOYDIR}"/idblock.bin
+    install -m 0644 ${WORKDIR}/${MACHINE}/uboot.img "${DEPLOYDIR}"/uboot.img
     install -m 0644 boot.scr "${DEPLOYDIR}"/boot.scr
 }
 
