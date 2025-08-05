@@ -9,7 +9,7 @@ S = "${WORKDIR}/sources"
 UNPACKDIR = "${S}"
 
 do_install:append() {
-    install -Dm644 ${UNPACKDIR}/asound.conf ${D}${sysconfdir}/asound.conf
+    install -Dm644 ${WORKDIR}/asound.conf ${D}${sysconfdir}/asound.conf
 }
 
 FILES:${PN} += " ${sysconfdir}/asound.conf "
