@@ -15,7 +15,7 @@ IMAGE_INSTALL:append = " ncurses-terminfo udev-conf-rockchip os-release ifupdown
 IMAGE_INSTALL:append = " alsa-utils rockchip-alsa-config pulseaudio-server alsa-plugins-pulseaudio-conf "
 
 # Chromium
-# IMAGE_INSTALL:append = " chromium-ozone-wayland "
+IMAGE_INSTALL:append = " chromium-ozone-wayland "
 IMAGE_INSTALL:append = " drm-cursor weston v4l-rkmpp v4l-utils libv4l "
 
 # WiFi
