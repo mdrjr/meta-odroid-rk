@@ -9,7 +9,7 @@ IMAGE_FEATURES:append = " package-management serial-autologin-root ssh-server-dr
 DISPLAY_PLATFORM ?= "wayland"
 DISTRO_FEATURES:append = " egl opengl wayland"
 
-IMAGE_INSTALL:append = " ncurses-terminfo udev-conf-rockchip os-release ifupdown dhcpcd resolvconf dialog"
+IMAGE_INSTALL:append = " ncurses-terminfo udev-conf-rockchip os-release dialog"
 
 # Audio
 IMAGE_INSTALL:append = " alsa-utils rockchip-alsa-config pulseaudio-server alsa-plugins-pulseaudio-conf "
