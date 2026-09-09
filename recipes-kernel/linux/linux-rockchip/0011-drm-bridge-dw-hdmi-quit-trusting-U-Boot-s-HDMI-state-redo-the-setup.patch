@@ -1,0 +1,18 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] drm/bridge: dw-hdmi: quit trusting U-Boot's HDMI state, redo the setup
+
+---
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -4157,6 +4157,11 @@
+ 	mutex_lock(&hdmi->mutex);
+ 	hdmi->disabled = false;
+ 	hdmi->curr_conn = connector;
++	if (hdmi->initialized && !hdmi->force_kernel_output) {
++		hdmi->initialized = false;
++		if (hdmi->bridge_is_on)
++			dw_hdmi_poweroff(hdmi);
++	}
+ 	if (hdmi->plat_data->dclk_set)
+ 		hdmi->plat_data->dclk_set(hdmi->plat_data->phy_data, true, 0);
+ 	dw_hdmi_update_power(hdmi);

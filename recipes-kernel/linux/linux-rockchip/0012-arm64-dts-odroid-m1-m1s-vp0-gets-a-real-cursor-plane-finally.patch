@@ -1,0 +1,45 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] arm64: dts: odroid-m1/m1s: vp0 gets a real cursor plane, finally
+
+---
+diff -ruN a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+--- a/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3566-odroid-m1s.dts
+@@ -13,6 +13,7 @@
+ #include <dt-bindings/display/drm_mipi_dsi.h>
+ #include <dt-bindings/sensor-dev.h>
+ #include "rk3566.dtsi"
++#include <dt-bindings/display/rockchip_vop.h>
+ 
+ / {
+ 	model = "Hardkernel ODROID-M1S";
+@@ -1279,3 +1280,7 @@
+ 		};
+ 	};
+ };
++
++&vp0 {
++	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER0>;
++};
+diff -ruN a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+--- a/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3568-odroid-m1.dts
+@@ -8,6 +8,7 @@
+ 
+ #include "rk3568-odroid.dtsi"
+ #include "rk3568-linux.dtsi"
++#include <dt-bindings/display/rockchip_vop.h>
+ 
+ / {
+ 	model = "Hardkernel ODROID-M1";
+@@ -236,4 +237,8 @@
+ 
+ &rknpu_mmu {
+ 	status = "disabled";
+-};
+\ No newline at end of file
++};
++
++&vp0 {
++	cursor-win-id = <ROCKCHIP_VOP2_CLUSTER0>;
++};
