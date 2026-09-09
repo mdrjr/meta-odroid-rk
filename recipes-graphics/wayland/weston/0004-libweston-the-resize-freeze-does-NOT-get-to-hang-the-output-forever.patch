@@ -1,0 +1,88 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] libweston: the resize freeze does NOT get to hang the output forever
+
+---
+--- a/include/libweston/libweston.h
++++ b/include/libweston/libweston.h
+@@ -599,6 +599,9 @@
+ 	/* Display freeze deadline */
+ 	struct timespec freeze_until;
+ 
++	struct timespec resize_freeze_start;
++	bool resize_freezing;
++
+ 	/* True if this output is mirroring the primary */
+ 	bool mirroring;
+ 
+--- a/libweston/compositor.c
++++ b/libweston/compositor.c
+@@ -4313,12 +4313,15 @@
+ 	return 0;
+ }
+ 
++#define RESIZE_FREEZE_MAX_MS 100
++
+ static bool
+ weston_output_should_freeze(struct weston_output *output)
+ {
+ 	struct weston_paint_node *pnode;
+ 	struct timespec now;
+ 	bool has_desktop_surface = false;
++	bool resizing = false;
+ 
+ 	if (output->freezing)
+ 		return true;
+@@ -4329,9 +4332,17 @@
+ 			 z_order_link) {
+ 		/* Freeze output during ongoing surface resize */
+ 		if (pnode->surface->wait_for_resizing) {
+-			/* Freeze output for 50ms after last surface resize */
+-			timespec_add_msec(&output->freeze_until, &now, 50);
+-			return true;
++			resizing = true;
++			if (!output->resize_freezing) {
++				output->resize_freezing = true;
++				output->resize_freeze_start = now;
++			}
++			if (timespec_sub_to_msec(&now, &output->resize_freeze_start) <
++			    RESIZE_FREEZE_MAX_MS) {
++				/* Freeze output for 50ms after last surface resize */
++				timespec_add_msec(&output->freeze_until, &now, 50);
++				return true;
++			}
+ 		}
+ 
+ 		/* Check if any desktop surface is present */
+@@ -4339,6 +4350,9 @@
+ 			has_desktop_surface = true;
+ 	}
+ 
++	if (!resizing)
++		output->resize_freezing = false;
++
+ 	/* Freeze output until first desktop app appears */
+ 	if (output->lazy_ready) {
+ 		if (!has_desktop_surface)
+--- a/libweston/desktop/surface.c
++++ b/libweston/desktop/surface.c
+@@ -193,6 +193,8 @@
+ static bool
+ weston_desktop_surface_wait_for_resizing(struct weston_desktop_surface *surface)
+ {
++	struct weston_geometry geometry;
++
+ 	if (!weston_desktop_surface_get_maximized(surface) &&
+ 	    !weston_desktop_surface_get_pending_maximized(surface) &&
+ 	    !weston_desktop_surface_get_fullscreen(surface) &&
+@@ -202,8 +204,9 @@
+ 	if (!surface->width && !surface->height)
+ 		return false;
+ 
+-	if (surface->surface->width != surface->width ||
+-	    surface->surface->height != surface->height)
++	geometry = weston_desktop_surface_get_geometry(surface);
++	if (geometry.width != surface->width ||
++	    geometry.height != surface->height)
+ 		return true;
+ 
+ 	return false;

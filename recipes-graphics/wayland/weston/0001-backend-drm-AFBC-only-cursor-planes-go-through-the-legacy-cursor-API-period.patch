@@ -1,0 +1,61 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] backend-drm: AFBC-only cursor planes go through the legacy cursor API, period
+
+---
+--- a/libweston/backend-drm/drm-internal.h
++++ b/libweston/backend-drm/drm-internal.h
+@@ -661,6 +661,7 @@
+ 	struct drm_fb *cursor_fb[2];
+ 	struct drm_plane_handle *cursor_handle;
+ 	int current_cursor;
++	bool legacy_cursor;
+ 
+ 	struct linux_dmabuf_memory *linux_dmabuf_memory[DRM_MAX_BUFFERS];
+ 	const struct pixel_format_info *format;
+--- a/libweston/backend-drm/drm.c
++++ b/libweston/backend-drm/drm.c
+@@ -3048,6 +3048,20 @@
+ 	if (!output->cursor_handle)
+ 		return 0;
+ 
++	if (device->atomic_modeset) {
++		struct drm_plane *plane = output->cursor_handle->plane;
++		struct weston_drm_format *fmt =
++			weston_drm_format_array_find_format(&plane->formats,
++							    DRM_FORMAT_ARGB8888);
++
++		output->legacy_cursor = !fmt ||
++			(!weston_drm_format_has_modifier(fmt, DRM_FORMAT_MOD_LINEAR) &&
++			 !weston_drm_format_has_modifier(fmt, DRM_FORMAT_MOD_INVALID));
++		if (output->legacy_cursor)
++			weston_log("cursor plane %u does not accept linear ARGB8888, "
++				   "using legacy cursor API\n", plane->plane_id);
++	}
++
+ 	for (i = 0; i < ARRAY_LENGTH(output->cursor_fb); i++) {
+ 		output->cursor_fb[i] = drm_fb_create_dumb(output->device,
+ 							  device->cursor_width,
+--- a/libweston/backend-drm/kms.c
++++ b/libweston/backend-drm/kms.c
+@@ -1550,6 +1550,10 @@
+ 		const struct pixel_format_info *pinfo = NULL;
+ 		bool scaling;
+ 
++		if (output->legacy_cursor && output->cursor_handle &&
++		    plane == output->cursor_handle->plane)
++			continue;
++
+ 		scaling = plane_state->src_w >> 16 != plane_state->dest_w ||
+ 			plane_state->src_h >> 16 != plane_state->dest_h;
+ 		if (scaling && !plane->can_scale) {
+@@ -1792,6 +1796,10 @@
+ 		goto out;
+ 	}
+ 
++	wl_list_for_each(output_state, &pending_state->output_list, link)
++		if (output_state->output->legacy_cursor)
++			drm_output_set_cursor(output_state);
++
+ 	wl_list_for_each_safe(output_state, tmp, &pending_state->output_list,
+ 			      link)
+ 		drm_output_assign_state(output_state, mode);

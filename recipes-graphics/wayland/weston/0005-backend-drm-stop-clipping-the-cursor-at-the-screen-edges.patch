@@ -1,0 +1,31 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] backend-drm: stop clipping the cursor at the screen edges
+
+---
+--- a/libweston/backend-drm/state-propose.c
++++ b/libweston/backend-drm/state-propose.c
+@@ -259,6 +259,24 @@
+ 	plane_state->handle = handle;
+ 	drm_plane_state_coords_for_paint_node(plane_state, pnode, zpos);
+ 
++	if (output->legacy_cursor) {
++		pixman_region32_t bbox;
++
++		pixman_region32_init(&bbox);
++		pixman_region32_copy(&bbox, &pnode->view->transform.boundingbox);
++		weston_region_global_to_output(&bbox, &output->base, &bbox);
++		plane_state->dest_x = pixman_region32_extents(&bbox)->x1;
++		plane_state->dest_y = pixman_region32_extents(&bbox)->y1;
++		pixman_region32_fini(&bbox);
++		plane_state->src_x = 0;
++		plane_state->src_y = 0;
++		plane_state->src_w = device->cursor_width << 16;
++		plane_state->src_h = device->cursor_height << 16;
++		plane_state->dest_w = device->cursor_width;
++		plane_state->dest_h = device->cursor_height;
++		goto out;
++	}
++
+ 	/* Apply cursor size scaling */
+ 	if (compositor->cursor_size) {
+ 		float scale =

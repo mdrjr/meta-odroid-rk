@@ -1,0 +1,66 @@
+From: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Subject: [PATCH] backend-drm: stop claiming LINEAR on planes that reject it
+
+---
+--- b/libweston/backend-drm/kms.c
++++ c/libweston/backend-drm/kms.c
+@@ -685,6 +685,22 @@
+  * Populates the plane's formats array, using either the IN_FORMATS blob
+  * property (if available), or the plane's format list if not.
+  */
++static bool
++drm_in_formats_has_linear(drmModePropertyBlobRes *blob, uint32_t format)
++{
++	drmModeFormatModifierIterator iter = {0};
++
++	while (drmModeFormatModifierBlobIterNext(blob, &iter)) {
++		if (iter.fmt != format)
++			continue;
++		if (iter.mod == DRM_FORMAT_MOD_LINEAR ||
++		    iter.mod == DRM_FORMAT_MOD_INVALID)
++			return true;
++	}
++
++	return false;
++}
++
+ int
+ drm_plane_populate_formats(struct drm_plane *plane, const drmModePlane *kplane,
+ 			   const drmModeObjectProperties *props,
+@@ -735,20 +751,30 @@
+ 	return ret;
+ 
+ fallback:
+-	/* No IN_FORMATS blob available, so just use the old. */
++	blob_id = drm_property_get_value(&plane->props[WDRM_PLANE_IN_FORMATS],
++					 props, 0);
++	if (blob_id != 0)
++		blob = drmModeGetPropertyBlob(device->kms_device->fd, blob_id);
++
+ 	for (i = 0; i < kplane->count_formats; i++) {
++		if (blob && !drm_in_formats_has_linear(blob, kplane->formats[i]))
++			continue;
+ 		fmt = weston_drm_format_array_add_format(&plane->formats,
+ 							 kplane->formats[i]);
+-		if (!fmt)
+-			return -1;
++		if (!fmt) {
++			ret = -1;
++			break;
++		}
+ 		ret = weston_drm_format_add_modifier(fmt, DRM_FORMAT_MOD_INVALID);
+ 		if (ret < 0)
+-			return -1;
++			break;
+ 		ret = weston_drm_format_add_modifier(fmt, DRM_FORMAT_MOD_LINEAR);
+ 		if (ret < 0)
+-			return -1;
++			break;
+ 	}
+-	return 0;
++	if (blob)
++		drmModeFreePropertyBlob(blob);
++	return ret;
+ }
+ 
+ bool
