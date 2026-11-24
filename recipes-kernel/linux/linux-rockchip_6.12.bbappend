@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRCREV = "b71dba0db2ee737d998740823571af6a6221e17f"
+SRCREV = "89cca847499160480ceadeb239795e16e6d87c61"
 SRC_URI:remove = "git://github.com/rockchip-linux/kernel.git;protocol=https;nobranch=1;branch=develop-6.12;"
 SRC_URI += "git://github.com/mdrjr/linux.git;protocol=https;nobranch=1;branch=rk-6.12; \
             file://rtl.cfg \
