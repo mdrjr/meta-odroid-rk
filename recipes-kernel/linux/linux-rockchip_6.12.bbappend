@@ -1,10 +1,9 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRCREV = "89cca847499160480ceadeb239795e16e6d87c61"
+SRCREV = "03ffce967b40c18cc7bb36ef12015dff29716153"
 SRC_URI:remove = "git://github.com/rockchip-linux/kernel.git;protocol=https;nobranch=1;branch=develop-6.12;"
 SRC_URI += "git://github.com/mdrjr/linux.git;protocol=https;nobranch=1;branch=rk-6.12; \
-            file://rtl.cfg \
-            file://0011-drm-bridge-dw-hdmi-quit-trusting-U-Boot-s-HDMI-state-redo-the-setup.patch"
+            file://rtl.cfg"
 
 KBUILD_DEFCONFIG = "odroid_linux_defconfig"
 ODROID_KERNEL_CONFIGS = "rockchip_linux_defconfig rk3568.config"
